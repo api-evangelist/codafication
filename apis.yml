@@ -1,0 +1,60 @@
+aid: codafication
+url: https://raw.githubusercontent.com/api-evangelist/codafication/refs/heads/main/apis.yml
+name: Codafication
+kind: company
+description: >-
+  Codafication is a Brisbane, Australia insurtech founded in 2015 by Daniel
+  Sandaver and Drew Butler out of a property claims and repair construction business,
+  building software for the general insurance claims supply chain rather than for
+  underwriting or policy administration. Its three products are Crunchwork, a cloud
+  claims and project management platform that acts as a control tower across insurers,
+  assessors, builders, restorers and trades (tasks and workflow, report writer, quotes
+  and variations, catalog, asset manager, purchase orders, invoices, finance, analytics,
+  vendor manager, zones, tenants and teams, and Pulse); Virtual Assist, a real-time
+  video streaming and virtual assessment tool used for remote triage of property
+  claims; and Unity Cloud, a GraphQL data and integration layer marketed as a way to
+  retrieve and normalise data across fragmented legacy insurance systems. Named
+  Australian customers and partners include Insurance Australia Group (IAG, announced
+  December 2025 for its property claims supply chain), Suncorp, Urban Utilities and
+  the Australian Building and Construction Group, alongside a Guidewire partner
+  relationship and SOC 2 Type II certification attained in January 2026. Its API
+  posture is honestly partner-gated: no developer, developers, docs or api subdomain
+  resolves for codafication.com, no public self-serve developer portal, API reference,
+  OpenAPI definition, Postman collection or webhook catalog could be found, and the
+  only integration surface documented publicly is Crunchwork consuming third-party
+  APIs (NetSuite, Xero, the ENData Scope API, and Opus document submission) as
+  configured engagements. Australia has no live open-insurance obligation - the
+  Consumer Data Right was designated to extend to general insurance and then deferred
+  - so nothing forces this platform to expose a public API, and it does not.
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- Insurance
+- Australia
+- Insurtech
+- Claims
+- Claims Management
+- Property and Casualty
+- FNOL
+- Supply Chain
+- GraphQL
+- Partner Gated
+created: '2026-07-25'
+modified: '2026-07-25'
+specificationVersion: '0.19'
+apis: []
+common:
+- type: Website
+  url: https://codafication.com/
+- type: Blog
+  url: https://blog.codafication.com/
+- type: BlogRSS
+  url: https://blog.codafication.com/rss.xml
+- type: SupportKnowledgeBase
+  url: https://support.codafication.com/en/
+- type: GitHubOrganization
+  url: https://github.com/Codafication
+- type: LinkedIn
+  url: https://www.linkedin.com/company/codafication/
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

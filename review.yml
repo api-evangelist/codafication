@@ -1,0 +1,305 @@
+aid: codafication
+name: Codafication
+review:
+  question: Does Codafication publish a public, self-serve developer portal or downloadable
+    API definitions for its insurance claims platforms?
+  answer: false
+  date: '2026-07-25'
+  reviewer: API Evangelist
+  homeMarket: Australia
+  gated: true
+findings:
+  summary: |
+    Codafication is a Brisbane, Australia insurtech (founded 2015, Daniel Sandaver
+    and Drew Butler) selling three products into the general insurance claims supply
+    chain: Crunchwork (claims and project management platform), Virtual Assist
+    (real-time video assessment / remote triage), and Unity Cloud (a GraphQL data
+    and integration layer over legacy insurance systems). It is a claims-tech vendor,
+    not a carrier or broker.
+
+    There is NO public self-serve developer portal and NO downloadable API definition.
+    developer.codafication.com, developers.codafication.com, docs.codafication.com and
+    api.codafication.com all fail to resolve (NXDOMAIN). Every path under
+    codafication.com - including /developers, /api, /developer, /partners,
+    /integrations, /robots.txt, /sitemap.xml and /.well-known/openid-configuration -
+    is served behind a SiteGround bot wall that returns HTTP 202 with an
+    `sg-captcha: challenge` header and a 169-byte JavaScript proof-of-work redirect
+    body, for anonymous clients. No first-party marketing page could therefore be
+    confirmed or classified from an anonymous probe, and no page was found that
+    presents itself as a developer portal.
+
+    The two first-party surfaces that ARE anonymously reachable are the Intercom
+    knowledge base at https://support.codafication.com/en/ (HTTP 200) and the HubSpot
+    blog at https://blog.codafication.com/ (HTTP 200). Both were harvested. The
+    knowledge base is an END-USER help centre for Crunchwork, Virtual Assist and
+    support - not API reference documentation. Its only "Integrations" collection
+    (https://support.codafication.com/en/collections/2731128-integrations, 5 articles)
+    documents Crunchwork CONSUMING third-party APIs, never Codafication exposing one:
+    a Crunchwork-to-NetSuite sync, a one-way Crunchwork-to-Xero integration that
+    explicitly requires "access to an authenticated Xero user for the API" and a
+    Codafication-run setup engagement, the "ENData Scope API" for publishing quotes
+    and variations to ENData with configurable unit/location/cost-item mapping, and
+    Opus document submission. That is a configured, professional-services integration
+    surface, not a self-serve API.
+
+    Certificate transparency (crt.sh) for %.codafication.com returned exactly seven
+    hosts: blog, crunchwork, go, helm, help, scim and unitycloud. Of these,
+    crunchwork.codafication.com and unitycloud.codafication.com return the same
+    HTTP 202 bot challenge (marketing hosts); helm.codafication.com returns HTTP 403
+    from CloudFront (private Helm chart repository); scim.codafication.com resolves to
+    34.116.97.51 but the TCP connection times out with no response, consistent with an
+    IP-allowlisted enterprise SCIM provisioning endpoint rather than a public API;
+    help.codafication.com returns 404; go.codafication.com does not resolve.
+
+    Unity Cloud is architecturally a GraphQL layer - Codafication published
+    "Why GraphQL is the future of insurance technology" (2022-02-24) and
+    "How insurers stay APRA compliant with GraphQL security" (2021-08-12, on CPS 234)
+    - but no public or introspectable GraphQL endpoint exists. Probes of
+    /graphql on both unitycloud.codafication.com and crunchwork.codafication.com
+    returned the bot challenge (HTTP 202, text/html), not a GraphQL surface, so no
+    SDL was harvested and none was fabricated.
+
+    The GitHub organisation github.com/Codafication is real (id 29222332, created
+    2017-06-06, location "Brisbane, Australia", email team@codafication.com, 29 public
+    repos). It contains no product, SDK or specification repository - 27 of 29 repos
+    are forks of third-party open source (apollo-server, graphql-yoga, graphql-tools,
+    subscriptions-transport-ws, typeorm, mediasoup, licode, xero-node,
+    node-suitetalk, australia-address-parser), which corroborates the GraphQL /
+    WebRTC / Xero / NetSuite stack but yields no API artifacts. The only two
+    non-forks are an internal APM proof-of-concept and a hiring exercise.
+  developerPortal:
+    url: ''
+    confirmed: false
+    classification: none-found
+    note: |
+      No developer portal exists at any probed first-party URL. Candidate subdomains
+      do not resolve; candidate paths return the site-wide bot challenge. This is
+      recorded as "no public API surface; partner-gated", not as a login wall,
+      because no gated developer surface was found either.
+  acordPosture: no ACORD reference found
+  acordEvidence: |
+    Searched the full accessible corpus - the Intercom knowledge base search
+    (https://support.codafication.com/en/search?q=ACORD returned zero articles), the
+    Crunchwork, Virtual Assist, Support and Integrations collections, and every blog
+    post reachable from https://blog.codafication.com/sitemap.xml - for ACORD, AL3,
+    ACORD XML, ACORD certified and NGDS. Zero matches. IVANS, Vertafore and Applied
+    Epic are US agency-download constructs and likewise do not appear. Codafication's
+    documented interchange is instead with Australian claims-scoping and finance
+    systems (ENData, Opus, NetSuite, Xero) and, at the architecture level, GraphQL.
+  insuranceVerbs:
+    quote:
+      exposed: false
+      note: Crunchwork has a Quotes module with quotes and variations, published to
+        ENData via ENData's own Scope API. No Codafication quote API is documented.
+    bind:
+      exposed: false
+      note: Not a product function - Codafication does not sell policies or place risk.
+    issue:
+      exposed: false
+      note: Not a product function - no policy administration or issuance product.
+    fnol:
+      exposed: false
+      note: |
+        FNOL is a real product capability - Codafication describes "our automated
+        forms platform for first notice of loss" and Crunchwork orchestrating the
+        claim "from first notification of loss through to completion of repairs" -
+        but it is delivered as partner-configured SaaS, with no public FNOL API,
+        endpoint or definition published.
+    audience: partner-only (insurers, assessors, builders, restorers and trades under
+      contract; no consumer or open agent self-serve tier)
+  authModel:
+    scheme: not publicly documented
+    note: |
+      No API authentication scheme is published. No OpenID Connect discovery document
+      or OAuth authorization server metadata could be retrieved -
+      /.well-known/openid-configuration and /.well-known/oauth-authorization-server on
+      codafication.com, unitycloud.codafication.com and crunchwork.codafication.com all
+      returned the HTTP 202 bot challenge. Product-level access is username/password
+      login to a tenant "Cloud" with role-based access control and MFA (per the SOC 2
+      Type II announcement of 2026-01-20); the existence of scim.codafication.com
+      implies SCIM-based enterprise user provisioning, but that host does not respond
+      to anonymous requests and its behaviour was NOT assumed or documented further.
+  webhooks:
+    documented: false
+    note: No event catalog, webhook reference or AsyncAPI document was found. Absence
+      is the finding.
+  postman:
+    public: false
+    note: A search of the Postman public network for "codafication" returned no
+      Codafication-owned workspace, collection or team.
+  graphql:
+    publicEndpoint: false
+    sdlHarvested: false
+    note: Unity Cloud is described in Codafication's own blog posts as a GraphQL layer
+      for insurance data retrieval, but no public endpoint is documented and no
+      introspection was possible. Nothing was saved.
+  grpc:
+    documented: false
+  openapi:
+    harvested: false
+    count: 0
+    note: No OpenAPI, Swagger or AsyncAPI document exists at any reachable
+      first-party location. The openapi/ directory was deliberately omitted rather
+      than populated with anything synthesised.
+  transports:
+  - protocol: HTTPS (marketing and application hosts)
+    documented: false
+    note: codafication.com, crunchwork.codafication.com and unitycloud.codafication.com
+      answer over HTTPS but return an anti-bot challenge (HTTP 202, sg-captcha) to
+      anonymous clients.
+  - protocol: GraphQL
+    documented: false
+    note: Named in Codafication's own engineering blog as the Unity Cloud interface
+      style. No public endpoint, schema or SDL published.
+  - protocol: REST
+    documented: false
+    note: Codafication consumes third-party REST APIs (Xero, NetSuite, ENData Scope
+      API) on behalf of customers. It does not publish one.
+  - protocol: WebSocket / WebRTC
+    documented: false
+    note: Virtual Assist is a real-time video streaming product and the GitHub org
+      forks mediasoup, licode and twilio-video samples, but no signalling or media
+      API is documented for third parties.
+  marketSeam: |
+    Australia has the legal machinery for open insurance and no live obligation. APRA
+    handles prudential supervision - Codafication engages that regime directly, having
+    published on CPS 234 Information Security compliance - but the Consumer Data Right,
+    which already opened banking and energy, was designated to extend to general
+    insurance and then deferred and de-prioritized. There is therefore no forcing
+    function that would make an Australian claims-tech platform publish a public API,
+    and Codafication has not. Its integration story runs through named enterprise
+    partnerships (IAG, Suncorp, Guidewire) and per-customer configured connectors, not
+    through an open developer surface.
+probes:
+- url: https://codafication.com/
+  status: 202
+  note: SiteGround bot challenge (sg-captcha header, JS proof-of-work redirect body).
+- url: https://www.codafication.com/
+  status: 202
+  note: Same bot challenge.
+- url: https://developer.codafication.com/
+  status: 0
+  note: DNS NXDOMAIN - host does not exist.
+- url: https://developers.codafication.com/
+  status: 0
+  note: DNS NXDOMAIN - host does not exist.
+- url: https://docs.codafication.com/
+  status: 0
+  note: DNS NXDOMAIN - host does not exist.
+- url: https://api.codafication.com/
+  status: 0
+  note: DNS NXDOMAIN - host does not exist.
+- url: https://codafication.com/developers
+  status: 202
+  note: Bot challenge, no content served.
+- url: https://codafication.com/api
+  status: 202
+  note: Bot challenge, no content served.
+- url: https://codafication.com/developer
+  status: 202
+  note: Bot challenge, no content served.
+- url: https://codafication.com/partners
+  status: 202
+  note: Bot challenge, no content served.
+- url: https://codafication.com/integrations
+  status: 202
+  note: Bot challenge, no content served.
+- url: https://codafication.com/.well-known/openid-configuration
+  status: 202
+  note: Bot challenge - no OIDC metadata retrievable.
+- url: https://unitycloud.codafication.com/graphql
+  status: 202
+  note: Bot challenge - not a GraphQL endpoint response.
+- url: https://crunchwork.codafication.com/graphql
+  status: 202
+  note: Bot challenge - not a GraphQL endpoint response.
+- url: https://crunchwork.codafication.com/.well-known/oauth-authorization-server
+  status: 202
+  note: Bot challenge - no authorization server metadata retrievable.
+- url: https://support.codafication.com/en/
+  status: 200
+  note: Intercom end-user knowledge base. Real, reachable, harvested. Not API docs.
+- url: https://support.codafication.com/en/collections/2731128-integrations
+  status: 200
+  note: 5 articles, all inbound third-party integrations (NetSuite, Xero, ENData
+    Scope API, Opus).
+- url: https://support.codafication.com/en/articles/9458222-endata-scope-api
+  status: 200
+  note: Crunchwork publishes quotes/variations to ENData's Scope API; mapping is
+    configured in Crunchwork's Configuration app. ENData's API, not Codafication's.
+- url: https://support.codafication.com/en/articles/8818984-intro-to-xero-and-crunchwork
+  status: 200
+  note: One-way Crunchwork to Xero sync; requires an authenticated Xero user for the
+    API and a Codafication-run cutover.
+- url: https://support.codafication.com/en/articles/7967860-how-to-sync-from-crunchwork-to-netsuite
+  status: 200
+  note: Crunchwork to NetSuite accounts/vendors/invoices sync, described operationally.
+- url: https://support.codafication.com/en/search?q=ACORD
+  status: 200
+  note: Zero articles returned. Basis for the "no ACORD reference found" posture.
+- url: https://blog.codafication.com/
+  status: 200
+  note: HubSpot-hosted blog. Reachable and harvested.
+- url: https://blog.codafication.com/rss.xml
+  status: 200
+  note: Valid RSS feed (text/xml).
+- url: https://blog.codafication.com/sitemap.xml
+  status: 200
+  note: 51 post URLs enumerated; whole corpus scanned for ACORD/AL3/NGDS/IVANS - no
+    hits.
+- url: https://blog.codafication.com/graphql-insurance
+  status: 200
+  note: '"Why GraphQL is the future of insurance technology", 2022-02-24.'
+- url: https://blog.codafication.com/apra-compliance-with-graphql
+  status: 200
+  note: '"How insurers stay APRA compliant with GraphQL security", 2021-08-12, on
+    APRA Prudential Standard CPS 234.'
+- url: https://blog.codafication.com/codafication-secures-soc-2-type-ii-certification
+  status: 200
+  note: SOC 2 Type II across Crunchwork, Virtual Assist and Unity Cloud, 2026-01-20.
+- url: https://blog.codafication.com/codafications-crunchwork-to-power-iags-modern-property-claims-supply-chain
+  status: 200
+  note: IAG property claims supply chain partnership announced December 2025.
+- url: https://helm.codafication.com/
+  status: 403
+  note: CloudFront 403 - private Helm chart repository, not a public API.
+- url: https://help.codafication.com/
+  status: 404
+  note: HubSpot-hosted host, no content.
+- url: https://scim.codafication.com/
+  status: 0
+  note: Resolves to 34.116.97.51 but TCP connection times out - no anonymous response.
+    Consistent with an allowlisted enterprise SCIM endpoint. Nothing assumed.
+- url: https://api.github.com/orgs/Codafication
+  status: 200
+  note: Real org, Brisbane Australia, team@codafication.com, 29 public repos, 27 of
+    them forks, no product or spec repository.
+sources:
+- url: https://blog.codafication.com/
+  type: Blog
+  note: Primary identity source - products, founders, customers, partnerships.
+- url: https://support.codafication.com/en/
+  type: SupportKnowledgeBase
+  note: Primary product-surface source - modules, integrations, roles.
+- url: https://github.com/Codafication
+  type: GitHubOrganization
+  note: Corroborates stack (GraphQL/Apollo, WebRTC/mediasoup, Xero, NetSuite) and
+    Australian base; no API artifacts.
+- url: https://crt.sh/?q=%25.codafication.com
+  type: CertificateTransparency
+  note: Full subdomain enumeration - seven hosts, none of them a developer or docs host.
+limitations: |
+  codafication.com and its application subdomains serve an anti-bot challenge to
+  anonymous clients, so no first-party marketing or application page could be read.
+  That challenge was NOT circumvented. Everything recorded here comes from hosts that
+  answered normally (blog, support, GitHub) or from the HTTP status of an honest
+  probe. No portal, endpoint, scope, specification or auth scheme has been inferred
+  or invented to fill the record.
+actions:
+  apisListed: 0
+  openapiDirectoryCreated: false
+  reason: |
+    No public, self-serve API surface exists for Codafication. apis[] is deliberately
+    empty and openapi/ is deliberately absent. For an Australian claims-tech vendor
+    with no CDR insurance obligation, partner-gated with zero published API artifacts
+    is the accurate finding and is the data point this data set exists to capture.
