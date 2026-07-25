@@ -1,0 +1,96 @@
+generated: '2026-07-25'
+method: searched
+first_party_documents_found: 0
+note: >-
+  Codafication publishes no first-party /.well-known/ discovery surface. Every path on
+  codafication.com and its application subdomains returns the site-wide SiteGround bot
+  challenge (HTTP 202, `sg-captcha: challenge`, 169-byte JavaScript proof-of-work redirect
+  body) rather than a document, for anonymous clients; that challenge was not
+  circumvented. docs.unitycloud.io is a static S3/CloudFront site that returns an S3
+  AccessDenied (403 application/xml) for any key that does not exist. The one 200 below is
+  Intercom's own security.txt served on the vendor-hosted support subdomain and canonical
+  to app.intercom.com - it is Intercom's vulnerability programme, not Codafication's, so
+  no SecurityTxt, Security or WellKnown pointer is wired into apis.yml from it.
+hosts:
+- host: https://codafication.com
+  first_party: true
+  behaviour: SiteGround bot challenge on every path (HTTP 202, sg-captcha header)
+  documents:
+  - path: /.well-known/security.txt
+    status: 202
+  - path: /.well-known/openid-configuration
+    status: 202
+  - path: /robots.txt
+    status: 202
+  - path: /llms.txt
+    status: 202
+- host: https://crunchwork.codafication.com
+  first_party: true
+  behaviour: SiteGround bot challenge on every path (HTTP 202, sg-captcha header)
+  documents:
+  - path: /.well-known/security.txt
+    status: 202
+  - path: /.well-known/openid-configuration
+    status: 202
+  - path: /.well-known/oauth-authorization-server
+    status: 202
+  - path: /.well-known/oauth-protected-resource
+    status: 202
+  - path: /.well-known/api-catalog
+    status: 202
+  - path: /llms.txt
+    status: 202
+- host: https://unitycloud.codafication.com
+  first_party: true
+  behaviour: SiteGround bot challenge on every path (HTTP 202, sg-captcha header)
+  documents:
+  - path: /.well-known/security.txt
+    status: 202
+  - path: /.well-known/openid-configuration
+    status: 202
+  - path: /.well-known/oauth-authorization-server
+    status: 202
+  - path: /.well-known/oauth-protected-resource
+    status: 202
+  - path: /.well-known/api-catalog
+    status: 202
+  - path: /llms.txt
+    status: 202
+- host: https://docs.unitycloud.io
+  first_party: true
+  behaviour: Static S3/CloudFront documentation site; missing keys return S3 AccessDenied (403 application/xml)
+  documents:
+  - path: /
+    status: 200
+    note: The Unity Platform SDK reference itself (Slate single-page, 65,678 bytes, Last-Modified 2022-03-24).
+  - path: /.well-known/security.txt
+    status: 403
+  - path: /openapi.json
+    status: 403
+  - path: /llms.txt
+    status: 403
+  - path: /robots.txt
+    status: 403
+  - path: /sitemap.xml
+    status: 403
+- host: https://blog.codafication.com
+  first_party: false
+  vendor: HubSpot
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+- host: https://support.codafication.com
+  first_party: false
+  vendor: Intercom
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    file: codafication-support-intercom-security.txt
+    owner: Intercom
+    canonical: https://app.intercom.com/.well-known/security.txt
+    note: >-
+      Vendor document served on a Codafication subdomain. Contact is
+      security@intercom.com / bugcrowd.com/intercom. Saved as evidence only; it does not
+      represent a Codafication disclosure programme.
+  - path: /llms.txt
+    status: 404

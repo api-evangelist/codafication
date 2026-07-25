@@ -1,0 +1,76 @@
+generated: '2026-07-25'
+method: searched
+source: https://docs.unitycloud.io/#portal-sdk
+note: >-
+  Client-side, embeddable React components shipped in the Unity Portal SDK
+  (@teamcodafication/unity-portal-sdk). Distinct from the server-side Unity SDK in
+  packages/. Every component, prop and field below is transcribed from the public
+  reference.
+loader:
+  library: "@teamcodafication/unity-portal-sdk"
+  language: javascript
+  framework: React
+  distribution: private npm scope (see packages/codafication-packages.yml)
+families:
+- name: Application shell
+  components:
+  - name: UnitySDK
+    kind: React wrapper component
+    description: >-
+      Wraps the entire React application. Handles all authentication for a frontend
+      extension - user login, token renewal, and authorization of the included GraphQL
+      client - and passes user information and GraphQL clients down to children as props.
+    props:
+    - name: redirect
+      description: The extension name as it appears in the url, used to redirect on login.
+    props_passed_to_children:
+    - name: client
+      description: GraphQL client for the older version of the API.
+    - name: clientV2
+      description: GraphQL client for new extensions.
+    - name: user
+      description: >-
+        The current UnityUser - id (UUID), firstName, lastName, phoneNumber, email,
+        avatarUrl, company, permissions.
+    example: |
+      import UnitySDK from '@teamcodafication/unity-portal-sdk'
+      ReactDOM.render(
+        <UnitySDK redirect="quotes"><App /></UnitySDK>,
+        document.getElementById('root')
+      )
+- name: Navigation
+  components:
+  - name: UnityBar
+    kind: React component
+    description: >-
+      The standard Unity navigation UI present across all core Unity applications, so an
+      extension stays visually consistent with the platform. Provides navigation between
+      applications, user details, logout, tenant switching and support integrations.
+      Optional - but if omitted, core-platform functionality such as logout and tenant
+      switching must be implemented by the extension itself.
+    props:
+    - name: client
+      description: An authenticated Unity Client, required to make requests to the Unity Platform. Typically the clientV2 prop passed down from the UnitySDK wrapper.
+    - name: logo
+      description: Details on the application's logo and its positioning in the Unity Bar.
+      fields:
+      - name: widthRatio
+        description: A value to help resize the image.
+      - name: marginLeft
+        description: The value of the logo's left margin.
+      - name: name
+        description: The name of the extension, used to display the logo.
+- name: Responsive layout
+  components:
+  - name: Device Controller
+    kind: React component
+    description: >-
+      Detects devices from viewport size so an extension can render components suited to
+      different devices.
+helpers:
+- name: getUnityClient / getUnityClientV2
+  kind: function
+  description: >-
+    Imported from the Portal SDK to retrieve an already-authenticated Unity client
+    anywhere inside an application, outside the props chain.
+  example: 'import { getUnityClientV2 } from "@teamcodafication/unity-portal-sdk"'

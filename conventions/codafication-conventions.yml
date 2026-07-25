@@ -1,0 +1,124 @@
+generated: '2026-07-25'
+method: searched
+source: https://docs.unitycloud.io/
+docs: https://docs.unitycloud.io/
+note: >-
+  Cross-cutting request/response semantics of the Unity Platform, transcribed from the
+  public Unity Platform SDK reference. There is no OpenAPI document to derive from;
+  everything below is what the documentation states, and gaps are recorded as gaps.
+surfaces:
+  primary: GraphQL
+  graphql:
+    style: single collated endpoint
+    description: >-
+      GraphQL requires one endpoint, so the schemas of every installed extension are
+      collated into a central location in the platform. Extensions augment the overall
+      schema through setLinks (linking types across two extensions) and setTypeExtensions
+      (adding fields to an existing type). Unity automatically generates strongly typed
+      where clauses on schemas.
+    clients:
+    - name: client
+      note: legacy GraphQL version
+    - name: clientV2
+      note: current version, used for new extensions
+    methods:
+    - query
+    - mutate
+    - request
+    - rawRequest
+    introspection: not publicly available - no anonymous endpoint was reachable
+  rest:
+    style: extension-scoped paths under the GraphQL gateway
+    private_pattern: https://<CloudDomain>/graphql/v2/<extensionName>/<endpoint>
+    public_pattern: https://<CloudDomain>/graphql/v2/public/<extensionName>/<endpoint>
+    methods:
+    - GET
+    - POST
+    implementation: express, wrapped by the Unity SDK (unity.get / unity.post / unity.publicGet / unity.publicPost)
+    note: >-
+      Every endpoint sits behind the owning extension's name because of the modular
+      nature of the platform. Public endpoints require no Unity authorization token;
+      private endpoints require an authorization header.
+authentication:
+  see: authentication/codafication-authentication.yml
+  summary: >-
+    Auth0-backed user login (SAML 2.0 / Active Directory) via the Portal SDK; Unity API
+    tokens from the in-product Developer Portal for platform calls; a pre-shared
+    authenticationSecret for backend extensions; an authorization header on private REST
+    endpoints.
+idempotency:
+  supported: unknown
+  documented: false
+  note: >-
+    No idempotency key, retry-safety guarantee or replay window is documented anywhere in
+    the public reference. Recorded as absent rather than assumed - no Idempotency pointer
+    is emitted for this provider.
+pagination:
+  documented: false
+  note: >-
+    No pagination convention (cursor, offset, page size limits, response envelope fields)
+    is documented. GraphQL queries accept a JSON `where` argument for filtering
+    (e.g. allUnityUsers(where: {firstName: {eq: "..."}})), and nested fields cannot take
+    arguments, but no paging contract is published.
+filtering:
+  style: strongly typed where clause
+  argument: where
+  type: JSON
+  operators_documented:
+  - eq
+  note: >-
+    Unity automatically generates strongly typed where clauses in schemas. Only the `eq`
+    operator appears in the published examples; the full operator set is not documented.
+field_selection:
+  style: native GraphQL field selection
+  note: >-
+    The docs call out data shape (responses mirror the request structure), a single smart
+    endpoint, strong typing, and nested field selection so related data across sources can
+    be fetched in one request instead of several calls. Arguments cannot be supplied to
+    nested fields.
+headers:
+  set_header: graphqlClient.setHeader(key, value)
+  set_headers: graphqlClient.setHeaders([{key, value}])
+  note: >-
+    The GraphQL client exposes setHeader and setHeaders for per-client header control.
+    No platform-defined request-id, tracing or correlation header is documented.
+request_tracing:
+  documented: false
+error_handling:
+  envelope: GraphQL data / errors keys
+  note: >-
+    graphqlClient.request returns the data or errors key from the response;
+    graphqlClient.rawRequest additionally returns the extensions key, returned as
+    [data, extensions]. No error code registry, problem+json usage or error taxonomy is
+    published, so no errors/ artifact was derived.
+  extensions_key: available via rawRequest
+versioning:
+  scheme: path segment on the gateway plus dual client generations
+  current: v2
+  evidence:
+  - REST endpoints are served under /graphql/v2/
+  - The Portal SDK passes both `client` (older GraphQL version) and `clientV2` (new extensions)
+  - The published reference is labelled "Version 1.0.0"
+  see: lifecycle/codafication-lifecycle.yml
+rate_limiting:
+  documented: false
+  note: No rate limit, quota or throttling signal is documented in the public reference.
+events:
+  see: asyncapi/codafication-unity-webhooks.yml
+  summary: >-
+    Webhooks subscribe to Unity mutations and deliver a caller-defined GraphQL query
+    result as the payload; logic hooks run in-process before or after a named mutation.
+platform_services:
+  note: >-
+    Configured by Codafication on request (support@codafication.com per the docs), then
+    called through unityClient.services.
+  services:
+  - name: sendSms
+    provider: Twilio
+    note: SMS and VoIP; Twilio uses WebRTC to connect calls to and from the browser. Customers may bring their own Twilio client.
+  - name: sendEmail
+    provider: SendGrid or Office 365 SMTP
+    note: Takes an email object (from, subject, to, cc, bcc, text, html) and an array of attachments (content readStream, contentType, filename).
+  - name: generateShortLink
+    provider: Bitly
+    note: HTTPS-encrypted short links for customer-facing messages.

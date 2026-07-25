@@ -1,0 +1,64 @@
+generated: '2026-07-25'
+method: searched
+source: https://docs.unitycloud.io/
+note: >-
+  Versioning is inferred only from what the reference itself shows. No versioning policy,
+  deprecation policy, SLA or status page is published, and each absence is recorded rather
+  than filled in.
+versioning:
+  scheme: gateway path segment plus dual client generations
+  current: v2
+  docs: https://docs.unitycloud.io/
+  evidence:
+  - Extension REST endpoints are served under https://<CloudDomain>/graphql/v2/...
+  - The Portal SDK passes both `client` (older GraphQL version) and `clientV2` (new extensions) to children
+  - getUnityClientV2 is the documented accessor for the current client
+  - The published reference is labelled "Version 1.0.0"
+  policy_published: false
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  note: >-
+    No deprecation policy, sunset window or Deprecation/Sunset header support is
+    documented. The `client` vs `clientV2` split shows an older GraphQL generation still in
+    service, but no timeline for its retirement is published. No Deprecation pointer is
+    emitted.
+sla:
+  url: null
+  published: false
+  uptime_target: null
+status_page:
+  url: null
+  published: false
+  probes:
+  - url: https://status.codafication.com/
+    status: 0
+    note: DNS does not resolve.
+  - url: https://status.unitycloud.io/
+    status: 0
+    note: DNS does not resolve.
+  - url: https://codafication.statuspage.io/
+    status: 302
+    note: >-
+      Redirects to https://www.statuspage.io/ - an unclaimed Atlassian Statuspage
+      subdomain, not a Codafication status page. No StatusPage pointer is emitted.
+changelog:
+  url: null
+  published: false
+  note: >-
+    No dated developer changelog or release-notes feed exists. Product releases are
+    announced irregularly on the marketing blog (e.g. "Crunchwork Release 2 2022"), which
+    is not a change log for the API surface, so no changelog/ artifact was created.
+roadmap:
+  url: null
+  published: false
+documentation_freshness:
+  host: docs.unitycloud.io
+  last_modified: '2022-03-24T00:35:29Z'
+  observed: '2026-07-25'
+  note: >-
+    The Last-Modified header on the S3/CloudFront-served reference is 2022-03-24. The
+    documented surface has not been republished in over four years, which is itself a
+    lifecycle signal for anyone integrating.
+deprecated_operations: []

@@ -1,0 +1,75 @@
+generated: '2026-07-25'
+method: searched
+source: https://docs.unitycloud.io/#web-hooks
+spec_type: Webhooks
+asyncapi_published: false
+note: >-
+  Codafication publishes no AsyncAPI document and no public event catalog. It does
+  document a real, first-class webhook and logic-hook surface in the Unity Platform SDK
+  reference, captured here verbatim in structure. The concrete list of Unity events is
+  behind the in-product Developer Portal ("refer to Developer Portal > WebHooks"), so no
+  event names are listed below - none were invented.
+webhooks:
+  model: subscribe-to-mutation
+  description: >-
+    In Unity a webhook is a subscription to a Unity event; Unity events are mutations, so
+    any extension's mutations can be subscribed to. When the event fires, Unity sends an
+    HTTP payload to a caller-supplied URL.
+  transport: HTTP
+  methods:
+  - POST
+  - PATCH
+  - PUT
+  payload:
+    style: caller-defined GraphQL query result
+    description: >-
+      Unlike traditional webhooks that deliver a fixed payload (typically just the id of
+      the affected object), a Unity webhook lets the subscriber supply a GraphQL query
+      that is executed when the event occurs; the result of that query is what gets
+      delivered. This usually removes the follow-up read a traditional webhook forces.
+  subscription_surface: Developer Portal > WebHooks (in-product, tenant-scoped)
+  documented_use_cases:
+  - Trigger external workflows
+  - Mirror Pulse data
+  - Download Virtual Assist sessions
+  event_catalog:
+    published: false
+    note: >-
+      An example list of Unity events exists only inside the Developer Portal. No public
+      event catalog, channel list or message schema is available.
+logic_hooks:
+  description: >-
+    In-process subscriptions to a mutation occurring within the platform. An extension
+    registers a mutation name plus a handler function to execute when that mutation runs.
+  kinds:
+  - name: beforeHook
+    method: unity.beforeHook(mutationName, handler)
+    example: unity.beforeHook("createItem", processWorkflows)
+    semantics: >-
+      Runs before the action is taken. Returning a promise from the handler blocks the
+      mutation until it settles; returning nothing lets the hook run asynchronously with
+      no impact on the mutation. Throwing an error in the handler prevents the action.
+  - name: afterHook
+    method: unity.afterHook(mutationName, handler)
+    example: unity.afterHook("SubmitItem", processWorkflows)
+    semantics: >-
+      Runs after the action is taken and returns the result of the action. Returning a
+      promise delays the returned result but does not impact the mutation. Throwing an
+      error does not stop or roll back any action already taken.
+  parameters:
+  - name: mutation
+    description: The name of the mutation to hook
+  - name: handler
+    description: A function which handles the hook
+streaming:
+  webrtc:
+    documented: true
+    note: >-
+      The platform's Omnichannel Communications suite provides WebRTC video streaming,
+      VoIP, SMS and real-time chat, and Virtual Assist is a real-time video product. No
+      signalling, media or subscription API is documented for third parties.
+  graphql_subscriptions:
+    documented: false
+    note: >-
+      The GitHub org forks subscriptions-transport-ws, but GraphQL subscriptions are not
+      documented in the public reference and are not claimed here.

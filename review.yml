@@ -3,11 +3,27 @@ name: Codafication
 review:
   question: Does Codafication publish a public, self-serve developer portal or downloadable
     API definitions for its insurance claims platforms?
-  answer: false
+  answer: partial
   date: '2026-07-25'
+  revised: '2026-07-25'
   reviewer: API Evangelist
   homeMarket: Australia
   gated: true
+  revisionNote: |
+    CORRECTION (enrichment round 2026-07-25). The first pass of this review enumerated
+    only %.codafication.com and concluded that no public API reference existed. It does -
+    on a SEPARATE REGISTRABLE DOMAIN. https://docs.unitycloud.io/ returns HTTP 200 and is
+    the complete public "Unity Platform SDK" API Reference: a Slate single-page document
+    (65,678 bytes, Last-Modified 2022-03-24, served from S3 behind CloudFront) covering the
+    Portal SDK, the Node.js Unity SDK, the GraphQL client, setQueries/setMutations,
+    setLinks/setTypeExtensions/setTypes, public and private REST endpoints, web hooks,
+    logic hooks, and the platform services. Consequently the earlier statements "no public
+    ... API reference ... or webhook catalog could be found" and "no docs subdomain
+    resolves" are WRONG as scoped and are corrected below: the docs host is
+    docs.unitycloud.io, not docs.codafication.com. What remains TRUE and unchanged: no
+    OpenAPI/Swagger/AsyncAPI document, no anonymously introspectable GraphQL endpoint, no
+    Postman collection, no public npm distribution of the SDKs, no self-serve signup, no
+    status page, no SLA, no deprecation policy and no named OAuth scopes.
 findings:
   summary: |
     Codafication is a Brisbane, Australia insurtech (founded 2015, Daniel Sandaver
@@ -17,9 +33,14 @@ findings:
     and integration layer over legacy insurance systems). It is a claims-tech vendor,
     not a carrier or broker.
 
-    There is NO public self-serve developer portal and NO downloadable API definition.
-    developer.codafication.com, developers.codafication.com, docs.codafication.com and
-    api.codafication.com all fail to resolve (NXDOMAIN). Every path under
+    There IS a public API reference, on a second registrable domain: https://docs.unitycloud.io/
+    (HTTP 200) is the Unity Platform SDK reference. There is still NO self-serve developer
+    portal - the Unity "Developer Portal" the reference repeatedly points at (for API
+    Tokens, extension registration and the list of Unity webhook events) is an in-product,
+    tenant-scoped screen with no public URL - and NO downloadable API definition of any
+    kind. developer.codafication.com, developers.codafication.com, docs.codafication.com and
+    api.codafication.com all fail to resolve (NXDOMAIN), as do developer.unitycloud.io,
+    portal.unitycloud.io, app.unitycloud.io and api.unitycloud.io. Every path under
     codafication.com - including /developers, /api, /developer, /partners,
     /integrations, /robots.txt, /sitemap.xml and /.well-known/openid-configuration -
     is served behind a SiteGround bot wall that returns HTTP 202 with an
@@ -68,14 +89,31 @@ findings:
     WebRTC / Xero / NetSuite stack but yields no API artifacts. The only two
     non-forks are an internal APM proof-of-concept and a hiring exercise.
   developerPortal:
-    url: ''
-    confirmed: false
-    classification: none-found
+    url: https://docs.unitycloud.io/
+    confirmed: true
+    classification: public-api-reference-without-self-serve-portal
     note: |
-      No developer portal exists at any probed first-party URL. Candidate subdomains
-      do not resolve; candidate paths return the site-wide bot challenge. This is
-      recorded as "no public API surface; partner-gated", not as a login wall,
-      because no gated developer surface was found either.
+      CORRECTED. A public API reference exists at https://docs.unitycloud.io/ - the Unity
+      Platform SDK documentation, reachable anonymously, returning HTTP 200. It is a
+      reference, not a portal: there is no registration, no key issuance, no console, no
+      try-it, no spec download and no support ticketing on it. The actual Unity Developer
+      Portal (where API Tokens are created, extensions are registered with their pre-shared
+      secret, and the list of Unity webhook events lives) is inside the customer's tenant
+      Cloud and has no public URL. On codafication.com itself no developer surface exists:
+      candidate subdomains do not resolve and candidate paths return the site-wide bot
+      challenge.
+    documentedSections:
+    - Introduction / About the Unity Platform / Benefits
+    - Developer Tooling - Prerequisites, Setup, Tools
+    - Portal SDK - UnitySDK frontend wrapper, UnityBar, getUnityClient
+    - Unity SDK - Unity Client, configuration, GraphQL client
+    - GraphQL Queries and Mutations - setQueries, setMutations
+    - GraphQL Extensions - setLinks, setTypeExtensions, setTypes
+    - REST Endpoints - public and private, get/post/publicGet/publicPost
+    - Web Hooks
+    - Logic Hooks - beforeHook, afterHook
+    - Services - Twilio SMS/VoIP, SendGrid/Office 365 email, Bitly short links
+    - Starting the backend server
   acordPosture: no ACORD reference found
   acordEvidence: |
     Searched the full accessible corpus - the Intercom knowledge base search
@@ -108,9 +146,23 @@ findings:
     audience: partner-only (insurers, assessors, builders, restorers and trades under
       contract; no consumer or open agent self-serve tier)
   authModel:
-    scheme: not publicly documented
+    scheme: Auth0 (OIDC, SAML 2.0 / Active Directory connections) + Unity API tokens + per-extension pre-shared secret
+    documented: true
+    docs: https://docs.unitycloud.io/#security
+    artifact: authentication/codafication-authentication.yml
     note: |
-      No API authentication scheme is published. No OpenID Connect discovery document
+      CORRECTED. The authentication model IS documented in the Unity Platform SDK
+      reference. User authentication is handled by Auth0 across multiple connections
+      (Active Directory, SAML 2.0), with the Portal SDK handling login, token renewal and
+      authorization of the GraphQL client. Platform calls require a "Unity Token" created
+      from Developer Portal > API Tokens. Backend extensions authenticate with a pre-shared
+      authenticationSecret registered on both the extension and the Developer Portal.
+      Private extension REST endpoints require an authorization header; public ones require
+      none. Authorization is centralised RBAC in the Unity API with granular permissions in
+      a multi-tenant environment - queries and mutations are secure by default, permissions
+      group into tenant-scoped internal roles which map to the customer's own external
+      directory roles. What is still NOT published: named scopes, and any machine-readable
+      metadata. No OpenID Connect discovery document
       or OAuth authorization server metadata could be retrieved -
       /.well-known/openid-configuration and /.well-known/oauth-authorization-server on
       codafication.com, unitycloud.codafication.com and crunchwork.codafication.com all
@@ -120,9 +172,23 @@ findings:
       implies SCIM-based enterprise user provisioning, but that host does not respond
       to anonymous requests and its behaviour was NOT assumed or documented further.
   webhooks:
-    documented: false
-    note: No event catalog, webhook reference or AsyncAPI document was found. Absence
-      is the finding.
+    documented: true
+    catalogPublished: false
+    asyncapi: false
+    docs: https://docs.unitycloud.io/#web-hooks
+    artifact: asyncapi/codafication-unity-webhooks.yml
+    note: |
+      CORRECTED. Webhooks ARE documented, and the model is unusual enough to be worth
+      recording: in Unity a webhook subscribes to a Unity EVENT, and Unity events are
+      MUTATIONS, so any extension's mutations are subscribable. Rather than a fixed payload,
+      the subscriber supplies a GraphQL query that is executed when the event fires and the
+      RESULT is delivered - which removes the follow-up read a conventional id-only webhook
+      forces. Delivery is HTTP POST/PATCH/PUT to a caller-chosen URL. Documented use cases
+      are triggering external workflows, mirroring Pulse data and downloading Virtual Assist
+      sessions. Separately, logic hooks (unity.beforeHook / unity.afterHook, keyed on a
+      mutation name) run in-process; a before hook can block or fail the mutation, an after
+      hook cannot roll it back. What is still absent: the concrete event catalog, which
+      lives only in the in-product Developer Portal, and any AsyncAPI document.
   postman:
     public: false
     note: A search of the Postman public network for "codafication" returned no
@@ -130,17 +196,50 @@ findings:
   graphql:
     publicEndpoint: false
     sdlHarvested: false
-    note: Unity Cloud is described in Codafication's own blog posts as a GraphQL layer
-      for insurance data retrieval, but no public endpoint is documented and no
-      introspection was possible. Nothing was saved.
+    documented: true
+    docs: https://docs.unitycloud.io/#graphql-client
+    note: |
+      PARTIALLY CORRECTED. The GraphQL surface is now documented in detail - one collated
+      endpoint (every installed extension's schema is merged centrally on the fly), strongly
+      typed auto-generated `where` clauses, RBAC and multi-tenancy secure-by-default,
+      queries/mutations registered via setQueries/setMutations, cross-extension type linking
+      via setLinks and setTypeExtensions, and two client generations (`client` for the older
+      GraphQL version, `clientV2` for new extensions, reachable via getUnityClientV2). Real
+      query shapes appear in the reference: allUnityUsers(where: JSON) returning users with
+      firstName/lastName/email/tenants{id}/permissions, and unityUser(id: ID!). The endpoint
+      itself remains tenant-scoped (https://<CloudDomain>/graphql/v2/...) with no anonymous
+      instance: /graphql, /api/graphql and /v1/graphql on both unitycloud.codafication.com
+      and crunchwork.codafication.com return the HTTP 202 bot challenge to a POST
+      introspection query, not a GraphQL response. NO SDL was harvested and none was
+      fabricated.
   grpc:
     documented: false
   openapi:
     harvested: false
     count: 0
-    note: No OpenAPI, Swagger or AsyncAPI document exists at any reachable
-      first-party location. The openapi/ directory was deliberately omitted rather
-      than populated with anything synthesised.
+    note: |
+      UNCHANGED AND RE-VERIFIED. No OpenAPI, Swagger or AsyncAPI document exists at any
+      reachable first-party location. Re-probed this round against every host: /openapi.json,
+      /openapi.yaml, /swagger.json, /v1/openapi.json, /api-docs, /docs and /redoc on
+      crunchwork.codafication.com and unitycloud.codafication.com all return the HTTP 202
+      bot challenge; the same paths on docs.unitycloud.io return S3 AccessDenied (403
+      application/xml) because it is a static single-page site with no such keys. The
+      openapi/ directory remains deliberately absent rather than populated with anything
+      synthesised.
+  sdks:
+    documented: true
+    publiclyDistributed: false
+    artifact: packages/codafication-packages.yml
+    note: |
+      NEW. Two first-party SDKs are named and used throughout the reference:
+      @teamcodafication/unity-portal-sdk (React frontend / Portal SDK - the UnitySDK wrapper,
+      UnityBar, Device Controller, getUnityClientV2) and @teamcodafication/unity-sdk (Node.js
+      backend, built on graphql-yoga over express). Both return 404 on the public npm
+      registry - distribution is partner-gated. A scope search of @teamcodafication returns
+      exactly one public package, @teamcodafication/commit-analyzer 9.0.2-codafication.0
+      (2023-02-11), a semantic-release plugin fork, not an API client. A first-party "Create
+      Extension CLI" plus Minikube/kubectl setup scripts are documented but not distributed
+      publicly and have no repository in the public GitHub org.
   transports:
   - protocol: HTTPS (marketing and application hosts)
     documented: false
@@ -274,7 +373,84 @@ probes:
   status: 200
   note: Real org, Brisbane Australia, team@codafication.com, 29 public repos, 27 of
     them forks, no product or spec repository.
+probes2026_07_25_enrichment:
+- url: https://docs.unitycloud.io/
+  status: 200
+  note: >-
+    THE FIND. Unity Platform SDK API Reference, 65,678 bytes of text/html served from
+    AmazonS3 via CloudFront, Last-Modified 2022-03-24, HSTS max-age 31536000. Missed by
+    the first pass because only %.codafication.com was enumerated.
+- url: https://unitycloud.io/
+  status: 202
+  note: Marketing host, same SiteGround bot challenge as codafication.com.
+- url: https://www.unitycloud.io/
+  status: 202
+  note: Same bot challenge.
+- url: https://api.unitycloud.io/
+  status: 0
+  note: DNS does not resolve.
+- url: https://developer.unitycloud.io/
+  status: 0
+  note: DNS does not resolve.
+- url: https://portal.unitycloud.io/
+  status: 0
+  note: DNS does not resolve.
+- url: https://app.unitycloud.io/
+  status: 0
+  note: DNS does not resolve.
+- url: https://docs.unitycloud.io/openapi.json
+  status: 403
+  note: S3 AccessDenied (application/xml) - static site, key does not exist. Same for
+    /openapi.yaml, /swagger.json, /llms.txt, /robots.txt, /sitemap.xml, /.well-known/security.txt.
+- url: https://crunchwork.codafication.com/openapi.json
+  status: 202
+  note: Bot challenge. Same for /openapi.yaml, /swagger.json, /v1/openapi.json, /api-docs,
+    /docs, /redoc, /llms.txt and every /.well-known/ path, on both crunchwork and unitycloud
+    codafication.com hosts.
+- url: https://unitycloud.codafication.com/graphql
+  status: 202
+  note: Re-probed with a POST introspection query {__schema{queryType{name}}} and a browser
+    user agent. Still the bot challenge (text/html), not a GraphQL response. Same for
+    /api/graphql, /v1/graphql, and the same three paths on crunchwork.codafication.com.
+- url: https://support.codafication.com/.well-known/security.txt
+  status: 200
+  note: >-
+    Intercom's OWN security.txt (Contact security@intercom.com, bugcrowd.com/intercom,
+    Canonical app.intercom.com), served on the vendor-hosted support subdomain. Saved as
+    evidence in well-known/ but NOT treated as a Codafication disclosure programme, and no
+    Security/SecurityTxt pointer was wired from it.
+- url: https://blog.codafication.com/.well-known/security.txt
+  status: 404
+- url: https://codafication.statuspage.io/
+  status: 302
+  note: >-
+    Redirects to https://www.statuspage.io/ - an unclaimed Atlassian Statuspage subdomain,
+    not a Codafication status page. status.codafication.com and status.unitycloud.io do not
+    resolve. No StatusPage pointer emitted.
+- url: https://trust.codafication.com/
+  status: 0
+  note: DNS does not resolve. security.codafication.com likewise. No trust center.
+- url: https://registry.npmjs.org/@teamcodafication%2Funity-sdk
+  status: 404
+  note: Documented SDK is not on the public npm registry. Same for
+    @teamcodafication/unity-portal-sdk. A scope search returns only
+    @teamcodafication/commit-analyzer.
+- url: https://pypi.org/pypi/codafication/json
+  status: 404
+- url: https://crt.sh/?q=%25.unitycloud.io
+  status: 200
+  note: Queried for subdomain enumeration on the second domain; no additional developer
+    or API hosts surfaced beyond docs.
+- url: https://www.postman.com/_api/ws/proxy (search-all "codafication")
+  status: 200
+  note: Zero Codafication-owned workspaces, collections or teams. Re-confirms no Postman surface.
 sources:
+- url: https://docs.unitycloud.io/
+  type: APIReference
+  note: >-
+    Primary developer-surface source, added 2026-07-25. The complete public Unity Platform
+    SDK reference. Everything in authentication/, conventions/, asyncapi/, data-model/,
+    components/, cli/, sandbox/ and packages/ is transcribed from this document.
 - url: https://blog.codafication.com/
   type: Blog
   note: Primary identity source - products, founders, customers, partnerships.
@@ -296,10 +472,50 @@ limitations: |
   probe. No portal, endpoint, scope, specification or auth scheme has been inferred
   or invented to fill the record.
 actions:
-  apisListed: 0
+  apisListed: 1
   openapiDirectoryCreated: false
   reason: |
-    No public, self-serve API surface exists for Codafication. apis[] is deliberately
-    empty and openapi/ is deliberately absent. For an Australian claims-tech vendor
-    with no CDR insurance obligation, partner-gated with zero published API artifacts
-    is the accurate finding and is the data point this data set exists to capture.
+    REVISED 2026-07-25. apis[] now carries one entry - the Unity Platform API - because a
+    real, anonymously reachable public API reference exists at https://docs.unitycloud.io/.
+    No baseURL is recorded for it, deliberately: the host is the customer's own tenant
+    Cloud domain (https://<CloudDomain>/graphql/v2/...), not a shared production host, and
+    inventing one would be worse than the five rating points it costs. openapi/ remains
+    deliberately absent - no OpenAPI, Swagger or AsyncAPI document exists first-party, and
+    nothing was synthesised. The corrected posture for this Australian claims-tech vendor
+    with no live CDR insurance obligation is: documented but partner-gated - a real SDK,
+    GraphQL, REST-extension and webhook contract described in prose, with every
+    machine-readable, self-serve and operational-transparency layer (spec, introspection,
+    registry distribution, signup, status page, SLA, deprecation policy, changelog)
+    missing.
+  artifactsWritten:
+  - authentication/codafication-authentication.yml
+  - conventions/codafication-conventions.yml
+  - asyncapi/codafication-unity-webhooks.yml
+  - data-model/codafication-data-model.yml
+  - packages/codafication-packages.yml
+  - cli/codafication-cli.yml
+  - components/codafication-components.yml
+  - sandbox/codafication-sandbox.yml
+  - conformance/codafication-conformance.yml
+  - lifecycle/codafication-lifecycle.yml
+  - well-known/codafication-well-known.yml
+  - well-known/codafication-support-intercom-security.txt
+  - llms/codafication-llms.txt
+  - security/codafication-domain-security.yml
+  artifactsDeliberatelySkipped:
+  - path: openapi/
+    reason: No specification exists; re-verified against every host this round.
+  - path: graphql/
+    reason: No anonymously introspectable endpoint; SDL cannot be harvested and was not fabricated.
+  - path: mcp/
+    reason: No MCP server published, and no OpenAPI to derive a candidate tool list from.
+  - path: skills/
+    reason: No OpenAPI operationIds to ground agent skills in.
+  - path: errors/
+    reason: No error-code registry or problem-type documentation published.
+  - path: scopes/
+    reason: Auth0-backed, but no named scopes are published anywhere.
+  - path: changelog/
+    reason: No dated developer changelog; marketing release posts are not an API change log.
+  - path: overlays/, grpc/, arazzo/, integrations/, agentic-access/, rules/, examples/
+    reason: All require an OpenAPI to extend, verify operationIds against, or classify.

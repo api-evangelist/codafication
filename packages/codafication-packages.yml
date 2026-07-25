@@ -1,0 +1,74 @@
+generated: '2026-07-25'
+method: searched
+source: https://docs.unitycloud.io/
+registries_probed:
+- npm
+- PyPI
+- Maven Central
+- NuGet
+- pkg.go.dev
+- RubyGems
+- Packagist
+- crates.io
+note: >-
+  Codafication ships two first-party SDKs under the @teamcodafication npm scope, both
+  named and used in code samples throughout the public Unity Platform SDK reference.
+  Neither resolves on the public npm registry (404) - distribution is private to
+  customers and partners. They are recorded as official SDKs with public_registry:false
+  rather than dropped, because the SDKs demonstrably exist and are publicly documented.
+  Only one @teamcodafication package is public on npm, and it is a tooling fork rather
+  than an API client.
+packages:
+- language: javascript
+  registry: npm
+  name: "@teamcodafication/unity-portal-sdk"
+  official: true
+  public_registry: false
+  registry_status: 404
+  role: Frontend SDK (Portal SDK)
+  description: >-
+    React front-end SDK. The UnitySDK component wraps the whole React application and
+    handles user login, token renewal and authorization of the included GraphQL client.
+    Exports getUnityClientV2 for retrieving an authenticated Unity client anywhere in an
+    application, and ships the UnityBar navigation component and a Device Controller.
+  documented_at: https://docs.unitycloud.io/#portal-sdk
+  import: 'import UnitySDK, { getUnityClientV2 } from "@teamcodafication/unity-portal-sdk"'
+- language: javascript
+  registry: npm
+  name: "@teamcodafication/unity-sdk"
+  official: true
+  public_registry: false
+  registry_status: 404
+  role: Backend SDK (Unity SDK)
+  description: >-
+    Node.js back-end SDK. Constructs a Unity client (name, gatewayUrl, localSchemaUrl,
+    localPort, authenticationSecret) and exposes the GraphQL client plus setQueries,
+    setMutations, setTypes, setLinks, setTypeExtensions, REST endpoint registration
+    (get/post/publicGet/publicPost), beforeHook/afterHook logic hooks, the services
+    client and start(). Built on graphql-yoga, which is itself built on express.
+  documented_at: https://docs.unitycloud.io/#unity-sdk
+  import: 'import { Unity } from "@teamcodafication/unity-sdk"'
+- language: javascript
+  registry: npm
+  name: "@teamcodafication/commit-analyzer"
+  url: https://www.npmjs.com/package/@teamcodafication/commit-analyzer
+  install: npm install @teamcodafication/commit-analyzer
+  official: true
+  public_registry: true
+  version: 9.0.2-codafication.0
+  published: '2023-02-11'
+  role: Build tooling (not an API client)
+  description: >-
+    Codafication's published fork of the semantic-release commit-analyzer plugin. The
+    only @teamcodafication package publicly resolvable on npm; it is release tooling, not
+    a Unity Platform client library.
+not_found:
+- registry: PyPI
+  query: codafication
+  status: 404
+- registry: npm
+  query: codafication
+  status: 200 (0 matching first-party packages)
+- registry: npm
+  query: "@teamcodafication scope search"
+  status: 200 (1 result, commit-analyzer only)

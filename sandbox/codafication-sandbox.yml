@@ -1,0 +1,62 @@
+generated: '2026-07-25'
+method: searched
+source: https://docs.unitycloud.io/#prerequisites-setup
+note: >-
+  Codafication publishes no hosted sandbox, no test tenant, no test/live key separation
+  and no magic test values. What it does publish is a complete local development
+  environment: Unity extensions are built and tested against a single-node Kubernetes
+  cluster running on the developer's own machine. That is the sandbox story, recorded as
+  it is - nothing was invented to fill the shape of a hosted test mode.
+hosted_sandbox:
+  available: false
+  test_credentials_published: false
+  test_live_key_separation: false
+  playground: false
+  note: >-
+    No console, playground or explorer is publicly reachable. GraphQL introspection is
+    not available anonymously on any Codafication host.
+local_environment:
+  name: Minikube-based local Unity development environment
+  description: >-
+    The Unity Platform brings together open-source tooling so a developer spends very
+    little time on infrastructure, authentication and security. Applications run as Docker
+    containers orchestrated by Kubernetes; Minikube provides a smaller single-node
+    Kubernetes cluster on a personal computer for building and testing.
+  prerequisites:
+  - name: Minikube
+    purpose: Run a single-node Kubernetes cluster locally to build and test Unity scenarios.
+    docs: https://kubernetes.io/docs/tasks/tools/install-minikube/
+  - name: kubectl
+    purpose: Command line interface for running commands against the local Kubernetes cluster.
+    docs: https://kubectl.docs.kubernetes.io/
+  - name: Docker
+    purpose: Container isolation for each application; the platform is language-agnostic because of it.
+    docs: https://docs.docker.com/get-started/
+  - name: Node.js
+    purpose: Runtime for the Unity SDK; currently the only SDK language shipped.
+    docs: https://nodejs.org/en/docs/
+  - name: Yarn
+    purpose: Package manager Codafication uses, chosen for its workspaces.
+    docs: https://yarnpkg.com/lang/en/docs/getting-started/
+  - name: TypeScript
+    purpose: Typed authoring for extensions.
+    docs: https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html
+  scaffolding:
+    tool: Create Extension CLI
+    see: cli/codafication-cli.yml
+    note: Generates frontend or backend extension boilerplate; setup scripts are provided for Minikube and kubectl.
+  local_configuration:
+    example_gateway_url: http://core-kernel:8080
+    example_local_schema_url: http://<extensionName>:8080
+    example_local_port: 8080
+    note: >-
+      When the SDK runs inside Unity, gatewayUrl is http://core-kernel:8080; when the SDK
+      runs externally it is a full address. These are the configuration values published
+      in the reference, not credentials.
+access:
+  requires_engagement: true
+  note: >-
+    A Unity Token from the in-product Developer Portal and a registered extension
+    pre-shared secret are both required to reach a real platform, and neither is
+    self-serve. Platform services (Twilio SMS/VoIP, SendGrid/Office 365 email, Bitly short
+    links) must be configured by Codafication on request.

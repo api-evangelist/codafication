@@ -1,0 +1,95 @@
+generated: '2026-07-25'
+method: searched
+source: https://docs.unitycloud.io/
+note: >-
+  Standards and compliance posture asserted only where Codafication itself states it, or
+  where the public documentation makes it structurally evident. No conformance was
+  inferred from a specification, because Codafication publishes none.
+standards:
+- id: graphql
+  conforms: true
+  evidence: >-
+    The Unity Platform is a GraphQL platform - single collated endpoint, strongly typed
+    schema, queries and mutations, type extensions, strongly typed where clauses. Built on
+    graphql-yoga. Documented throughout https://docs.unitycloud.io/
+- id: oauth2
+  conforms: true
+  evidence: >-
+    User authentication is provided by Auth0, an OAuth 2.0 / OIDC authorization server.
+    Documented at https://docs.unitycloud.io/#security. No authorization-server metadata
+    document is publicly retrievable, so flows and scopes are unverified.
+- id: oidc
+  conforms: true
+  evidence: >-
+    Auth0-provided authentication connections; /.well-known/openid-configuration is not
+    publicly retrievable on any Codafication host (site bot challenge).
+- id: saml2
+  conforms: true
+  evidence: >-
+    "authentication connections, provided by Auth0 (e.g. Active Directory or SAML 2.0)" -
+    https://docs.unitycloud.io/#security
+- id: scim2
+  conforms: unknown
+  evidence: >-
+    scim.codafication.com exists in certificate transparency and resolves, but does not
+    answer anonymous requests. No SCIM behaviour is documented; not asserted.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: >-
+    Errors surface through the GraphQL data/errors/extensions envelope. No
+    application/problem+json usage is documented.
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: >-
+    No first-party /.well-known/security.txt on any Codafication host. The 200 returned by
+    support.codafication.com/.well-known/security.txt is Intercom's own file, canonical to
+    app.intercom.com - see well-known/codafication-well-known.yml.
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: No deprecation or sunset policy is published.
+- id: openapi
+  conforms: false
+  evidence: No OpenAPI or Swagger document exists at any reachable first-party location.
+- id: asyncapi
+  conforms: false
+  evidence: >-
+    A real webhook and logic-hook surface is documented, but no AsyncAPI document and no
+    public event catalog are published.
+- id: acord
+  conforms: false
+  evidence: >-
+    Zero ACORD, AL3, ACORD XML or NGDS references across the support knowledge base search
+    and every blog post reachable from the sitemap. Interchange runs to Australian
+    claims-scoping and finance systems (ENData, Opus, NetSuite, Xero) instead.
+- id: cdr-open-insurance
+  conforms: false
+  evidence: >-
+    Australia's Consumer Data Right was designated to extend to general insurance and then
+    deferred, so there is no live open-insurance obligation to conform to.
+compliance:
+  published: true
+  programs:
+  - name: SOC 2 Type II
+    status: certified
+    scope: Crunchwork, Virtual Assist and Unity Cloud
+    date: '2026-01-20'
+    source: https://blog.codafication.com/codafication-secures-soc-2-type-ii-certification
+  - name: APRA Prudential Standard CPS 234 (Information Security)
+    status: addressed in published guidance
+    note: >-
+      Codafication publishes on how insurers stay CPS 234 compliant with GraphQL security
+      (2021-08-12). This is a stated engagement with the Australian prudential regime, not
+      a certification.
+    source: https://blog.codafication.com/apra-compliance-with-graphql
+  trust_center:
+    published: false
+    note: >-
+      trust.codafication.com and security.codafication.com do not resolve; no trust portal
+      was found. The SOC 2 Type II announcement is the compliance surface.
+security_controls_documented:
+- Role-based access control centralised in the Unity API, granular permissions, multi-tenant
+- Queries and mutations secure by default, whitelisted to users
+- Internal tenant-scoped roles mapped to external enterprise-directory roles
+- Multi-factor authentication (stated in the SOC 2 Type II announcement)
+- Docker container isolation described as an added layer of security
+- HSTS on docs.unitycloud.io (see security/codafication-domain-security.yml)

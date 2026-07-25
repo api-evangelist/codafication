@@ -1,0 +1,35 @@
+generated: '2026-07-25'
+method: searched
+source: https://docs.unitycloud.io/#tools
+note: >-
+  Codafication documents a first-party developer tooling set in the public Unity Platform
+  SDK reference. The tools are named and their purpose described, but no install command,
+  package name, repository or command/flag reference is published, and no matching
+  repository exists in the public github.com/Codafication org. Recorded at the fidelity
+  the docs provide - no commands were invented.
+cli:
+  name: Create Extension CLI
+  vendor: Codafication
+  purpose: >-
+    Scaffolds a basic frontend or backend Unity extension from a user-defined selection of
+    available technologies, so a developer starts from working boilerplate rather than
+    wiring the platform integration by hand.
+  documented_at: https://docs.unitycloud.io/#tools
+  install:
+    published: false
+    note: No install method, package name or binary name is published.
+  commands:
+    published: false
+    note: No command, subcommand or flag reference is published.
+supporting_tools:
+- name: Minikube / kubectl setup scripts
+  purpose: >-
+    Scripts provided by Codafication to set up the local Minikube and kubectl environment
+    a Unity extension is developed against.
+  documented_at: https://docs.unitycloud.io/#tools
+distribution:
+  public_repository: false
+  note: >-
+    The docs link to https://github.com/Codafication/ as "our gitHub"; the public org
+    contains 29 repositories, 27 of them forks of third-party open source, and no
+    extension-CLI or SDK repository. Distribution is therefore partner-gated.

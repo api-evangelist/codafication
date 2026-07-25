@@ -1,0 +1,150 @@
+generated: '2026-07-25'
+method: searched
+source: https://docs.unitycloud.io/
+note: >-
+  There is no OpenAPI or introspectable GraphQL schema to derive an entity graph from.
+  This model captures only the entities and fields the public Unity Platform SDK
+  reference actually names, plus the platform's structural relationships (extension,
+  tenant, schema collation). Names appearing in illustrative code samples are marked as
+  examples so they are not mistaken for platform types.
+entities:
+- name: UnityUser
+  kind: platform type
+  source: https://docs.unitycloud.io/#user
+  fields:
+  - name: id
+    type: UUID
+    description: The user's id, a UUID stored in Unity.
+  - name: firstName
+    type: String
+  - name: lastName
+    type: String
+  - name: phoneNumber
+    type: String
+  - name: email
+    type: String
+  - name: avatarUrl
+    type: String
+  - name: company
+    type: Company
+    description: The user's current company.
+  - name: permissions
+    type: '[Permission]'
+    description: A list of the user's permissions.
+  - name: tenants
+    type: '[Tenant]'
+    description: >-
+      Returned by the allUnityUsers query sample, where each tenant is selected by id.
+  queries:
+  - name: allUnityUsers
+    note: Accepts a JSON `where` argument; returns a `users` collection.
+  - name: unityUser
+    note: Takes an ID! argument; returns a `user`.
+- name: Tenant
+  kind: platform type
+  source: https://docs.unitycloud.io/#security
+  description: >-
+    The unit of multi-tenancy. Internal security roles apply to a tenant; external
+    security roles are also tenant scoped. The UnityBar provides tenant switching.
+- name: SecurityRole
+  kind: platform concept
+  source: https://docs.unitycloud.io/#security
+  variants:
+  - internal - a grouping of permissions applied to a tenant
+  - external - the customer's own role names, supplied from their enterprise user directory
+- name: Permission
+  kind: platform concept
+  source: https://docs.unitycloud.io/#security
+  description: >-
+    Granular permission applied through the Unity API's centralised RBAC. All GraphQL
+    queries and mutations are secure by default and whitelisted to users.
+- name: Extension
+  kind: platform concept
+  source: https://docs.unitycloud.io/#configuration
+  fields:
+  - name: name
+    description: The name of the extension; also the path segment every REST endpoint sits behind.
+  - name: gatewayUrl
+    description: Location of the core-kernel the extension communicates with.
+  - name: localSchemaUrl
+    description: The endpoint from which the extension's GraphQL schema is served.
+  - name: localPort
+    description: The local port the extension listens on.
+  - name: authenticationSecret
+    description: Pre-shared key registered on both the extension and the Unity Developer Portal.
+- name: Webhook
+  kind: platform concept
+  source: https://docs.unitycloud.io/#web-hooks
+  description: A subscription to a Unity event (a mutation), delivering a caller-supplied GraphQL query result to a URL.
+  see: asyncapi/codafication-unity-webhooks.yml
+- name: LogicHook
+  kind: platform concept
+  source: https://docs.unitycloud.io/#logic-hooks
+  description: A before or after handler registered against a mutation name.
+relationships:
+- from: UnityUser
+  to: Tenant
+  kind: has_many
+  via: tenants
+  source: https://docs.unitycloud.io/#getunityclient
+- from: UnityUser
+  to: Company
+  kind: has_one
+  via: company
+  source: https://docs.unitycloud.io/#user
+- from: UnityUser
+  to: Permission
+  kind: has_many
+  via: permissions
+  source: https://docs.unitycloud.io/#user
+- from: SecurityRole
+  to: Tenant
+  kind: belongs_to
+  via: tenant scope
+  source: https://docs.unitycloud.io/#security
+- from: SecurityRole
+  to: Permission
+  kind: has_many
+  via: permission set
+  source: https://docs.unitycloud.io/#security
+- from: Extension
+  to: Webhook
+  kind: has_many
+  via: mutations exposed by the extension
+  source: https://docs.unitycloud.io/#web-hooks
+- from: Extension
+  to: LogicHook
+  kind: has_many
+  via: beforeHook / afterHook registrations
+  source: https://docs.unitycloud.io/#logic-hooks
+schema_composition:
+  description: >-
+    Because GraphQL requires a single endpoint, the schemas of all external extensions are
+    collated centrally on the fly. This is what makes cross-extension relationships
+    expressible.
+  mechanisms:
+  - name: setLinks
+    effect: >-
+      Creates a link between types originating in two separate extensions, resolved by a
+      named query with mapped args - e.g. extend type "Item" with field "createdBy" of
+      type "User", resolved by queryName "user" with args {id: "userId"}.
+  - name: setTypeExtensions
+    effect: >-
+      Adds an additional field to an existing base type without linking two extensions'
+      data - e.g. add field "customData" of type "ItemCustomData" to "ItemType".
+  - name: setTypes
+    effect: Sends standalone GraphQL types to the platform so other extensions can extend them.
+sample_only_types:
+  note: >-
+    These appear purely in illustrative code in the reference and are NOT documented
+    platform entities. Listed so they are not mistaken for the Unity data model.
+  names:
+  - Item / ItemType / ItemCustomData
+  - CreateItemInput
+  - HelloWorldMessage
+  - mutations createItem, SubmitItem
+domain_note: >-
+  The insurance domain model that Crunchwork exposes - claims, jobs, quotes, variations,
+  assessments, reports, purchase orders, invoices, assets, vendors, zones - is not
+  published in any machine-readable or reference form. Only the Unity Platform layer above
+  is documented, so only that is modelled here.

@@ -1,0 +1,86 @@
+generated: '2026-07-25'
+method: searched
+source: https://docs.unitycloud.io/
+docs: https://docs.unitycloud.io/#security
+note: >-
+  Derived by reading the public Unity Platform SDK reference. There is no OpenAPI
+  document to mechanically derive securitySchemes from, so every scheme below is
+  transcribed from what the documentation states. Nothing was inferred from the
+  gated application hosts.
+summary:
+  types:
+  - oauth2
+  - openIdConnect
+  - saml
+  - apiKey
+  - preSharedSecret
+  api_key_in:
+  - header
+  identity_provider: Auth0
+  multi_tenant: true
+  authorization_model: role-based access control with granular permissions
+schemes:
+- name: Auth0 user authentication
+  type: openIdConnect
+  provider: Auth0
+  description: >-
+    All end-user authentication for Unity Platform applications is handled by Auth0.
+    The Portal SDK (UnitySDK React component) handles user login and token renewal,
+    and authorizes the GraphQL client used for calls to the platform.
+  connections:
+  - SAML 2.0
+  - Active Directory
+  source: https://docs.unitycloud.io/#security
+- name: Unity Token
+  type: apiKey
+  in: header
+  description: >-
+    A Unity Token is required to communicate with the Unity Platform. Tokens are
+    created from the in-product Developer Portal under "Developer Portal > API Tokens".
+    No public self-serve issuance surface is published.
+  issued_via: Developer Portal > API Tokens (in-product, tenant-scoped)
+  source: https://docs.unitycloud.io/#configuration
+- name: Extension authenticationSecret
+  type: preSharedSecret
+  description: >-
+    Backend extensions authenticate to the Unity Platform with a pre-shared key passed
+    as the authenticationSecret field of the Unity SDK constructor. The same key must be
+    registered on both sides - in the extension configuration and in the Unity Developer
+    Portal - for all requests and actions from that extension.
+  configured_in:
+  - Unity SDK constructor (authenticationSecret)
+  - Unity Developer Portal extension configuration
+  source: https://docs.unitycloud.io/#configuration
+- name: Private REST endpoint authorization header
+  type: http
+  scheme: bearer
+  description: >-
+    Extension REST endpoints registered with unity.post/unity.get are private and
+    require an authorization token in the request header. Endpoints registered with
+    publicPost/publicGet are callable with no Unity authorization.
+  applies_to: https://<CloudDomain>/graphql/v2/<extensionName>/<endpoint>
+  source: https://docs.unitycloud.io/#rest-endpoints
+authorization:
+  model: RBAC
+  description: >-
+    The Unity API is the centralised point of control for role-based access control and
+    granular permissions in a multi-tenant environment. All GraphQL queries and mutations
+    are secure by default and can be whitelisted to users across multiple authentication
+    connections. Permissions are grouped into internal security roles scoped to a tenant,
+    which are then mapped to external security roles supplied by the customer's enterprise
+    user directory, giving customers automatic user onboarding under their own role names.
+  tenant_scoped: true
+  external_role_mapping: true
+  source: https://docs.unitycloud.io/#security
+provisioning:
+  scim:
+    host: https://scim.codafication.com/
+    status: 0
+    note: >-
+      Host resolves (34.116.97.51) but the TCP connection times out for anonymous
+      clients, consistent with an IP-allowlisted enterprise SCIM endpoint. No SCIM
+      behaviour is documented publicly and none was assumed.
+not_published:
+- OAuth 2.0 authorization server metadata (/.well-known/oauth-authorization-server returns the site bot challenge)
+- OpenID Connect discovery document (/.well-known/openid-configuration returns the site bot challenge)
+- A scopes / permissions reference listing named scope strings

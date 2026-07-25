@@ -12,20 +12,25 @@ description: >-
   and variations, catalog, asset manager, purchase orders, invoices, finance, analytics,
   vendor manager, zones, tenants and teams, and Pulse); Virtual Assist, a real-time
   video streaming and virtual assessment tool used for remote triage of property
-  claims; and Unity Cloud, a GraphQL data and integration layer marketed as a way to
-  retrieve and normalise data across fragmented legacy insurance systems. Named
-  Australian customers and partners include Insurance Australia Group (IAG, announced
-  December 2025 for its property claims supply chain), Suncorp, Urban Utilities and
-  the Australian Building and Construction Group, alongside a Guidewire partner
-  relationship and SOC 2 Type II certification attained in January 2026. Its API
-  posture is honestly partner-gated: no developer, developers, docs or api subdomain
-  resolves for codafication.com, no public self-serve developer portal, API reference,
-  OpenAPI definition, Postman collection or webhook catalog could be found, and the
-  only integration surface documented publicly is Crunchwork consuming third-party
-  APIs (NetSuite, Xero, the ENData Scope API, and Opus document submission) as
-  configured engagements. Australia has no live open-insurance obligation - the
-  Consumer Data Right was designated to extend to general insurance and then deferred
-  - so nothing forces this platform to expose a public API, and it does not.
+  claims; and Unity Cloud, the GraphQL data, extension and integration platform the
+  other two products are built on. Unity Cloud does publish a public developer
+  reference at docs.unitycloud.io - the Unity Platform SDK documentation - covering the
+  Portal SDK (React), the Node.js Unity SDK, the GraphQL client, setQueries and
+  setMutations, GraphQL links and type extensions, public and private REST endpoints
+  served under a tenant Cloud domain, GraphQL-payload webhooks, before/after logic hooks,
+  and the Twilio, SendGrid and Bitly platform services. Authentication is Auth0-backed
+  (SAML 2.0 and Active Directory connections) with tenant-scoped role-based access
+  control, plus Unity API tokens issued from the in-product Developer Portal and
+  pre-shared extension secrets. What is missing is the self-serve layer: no OpenAPI or
+  AsyncAPI definition, no public GraphQL introspection endpoint, no Postman collection,
+  no public npm distribution of the SDKs, no status page and no self-serve signup -
+  access runs through named enterprise engagements. Customers and partners include
+  Insurance Australia Group (IAG, announced December 2025), Suncorp, Urban Utilities and
+  the Australian Building and Construction Group, alongside a Guidewire partnership and
+  SOC 2 Type II certification attained in January 2026. Australia has no live
+  open-insurance obligation - the Consumer Data Right was designated to extend to general
+  insurance and then deferred - so nothing forces this platform to open further than it
+  already has.
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 tags:
 - Insurance
@@ -37,24 +42,107 @@ tags:
 - FNOL
 - Supply Chain
 - GraphQL
+- Webhooks
+- SDK
+- Extensions
+- Multi Tenant
 - Partner Gated
 created: '2026-07-25'
 modified: '2026-07-25'
 specificationVersion: '0.19'
-apis: []
+apis:
+- name: Unity Platform API
+  description: >-
+    The Unity Cloud (Unity Platform) developer surface, documented publicly at
+    docs.unitycloud.io as the Unity Platform SDK reference. A single GraphQL endpoint
+    collates the schemas of every installed extension, with strongly typed where clauses,
+    role-based access control and multi-tenancy applied by default. Extensions written
+    against the Node.js Unity SDK register GraphQL queries, mutations, links and type
+    extensions, and may additionally serve public and private REST endpoints under
+    https://<CloudDomain>/graphql/v2/public/<extensionName>/<endpoint> and
+    https://<CloudDomain>/graphql/v2/<extensionName>/<endpoint>. Events are exposed as
+    webhooks whose payload is a GraphQL query executed at trigger time, and as
+    before/after logic hooks bound to mutation names. No baseURL is recorded here on
+    purpose - the host is the customer's own tenant Cloud domain, not a single shared
+    production host, and none was fabricated.
+  humanURL: https://docs.unitycloud.io/
+  tags:
+  - GraphQL
+  - Webhooks
+  - Insurance
+  - Claims
+  - Extensions
+  - Multi Tenant
+  properties:
+  - type: Documentation
+    url: https://docs.unitycloud.io/
+  - type: APIReference
+    url: https://docs.unitycloud.io/
+  - type: GettingStarted
+    url: https://docs.unitycloud.io/#prerequisites-setup
+  - type: Webhooks
+    url: asyncapi/codafication-unity-webhooks.yml
+  - type: Authentication
+    url: authentication/codafication-authentication.yml
+  - type: Conventions
+    url: conventions/codafication-conventions.yml
+  - type: DataModel
+    url: data-model/codafication-data-model.yml
 common:
 - type: Website
   url: https://codafication.com/
+- type: Documentation
+  url: https://docs.unitycloud.io/
+- type: APIReference
+  url: https://docs.unitycloud.io/
+- type: GettingStarted
+  url: https://docs.unitycloud.io/#prerequisites-setup
 - type: Blog
   url: https://blog.codafication.com/
 - type: BlogRSS
   url: https://blog.codafication.com/rss.xml
+- type: Support
+  url: https://support.codafication.com/en/
 - type: SupportKnowledgeBase
   url: https://support.codafication.com/en/
+- type: Contact
+  url: https://codafication.com/get-in-touch/
+- type: TermsOfService
+  url: https://codafication.com/terms-and-conditions/
+- type: PrivacyPolicy
+  url: https://codafication.com/privacy
 - type: GitHubOrganization
   url: https://github.com/Codafication
 - type: LinkedIn
   url: https://www.linkedin.com/company/codafication/
+- type: Webhooks
+  url: asyncapi/codafication-unity-webhooks.yml
+- type: Authentication
+  url: authentication/codafication-authentication.yml
+- type: Conventions
+  url: conventions/codafication-conventions.yml
+- type: DataModel
+  url: data-model/codafication-data-model.yml
+- type: Packages
+  url: packages/codafication-packages.yml
+- type: SDKs
+  url: packages/codafication-packages.yml
+- type: CLI
+  url: cli/codafication-cli.yml
+- type: Components
+  url: components/codafication-components.yml
+- type: Sandbox
+  url: sandbox/codafication-sandbox.yml
+- type: Conformance
+  url: conformance/codafication-conformance.yml
+- type: Compliance
+  url: https://blog.codafication.com/codafication-secures-soc-2-type-ii-certification
+- type: Lifecycle
+  url: lifecycle/codafication-lifecycle.yml
+- type: LLMsTxt
+  url: llms/codafication-llms.txt
+- type: DomainSecurity
+  url: security/codafication-domain-security.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
