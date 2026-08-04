@@ -1,0 +1,21 @@
+{
+  "repo": "codafication",
+  "feeds": [
+    {
+      "source": "https://docs.unitycloud.io/#prerequisites-setup",
+      "feed_url": "https://docs.unitycloud.io/#prerequisites-setup",
+      "title": "",
+      "saved": 0,
+      "method": "none"
+    },
+    {
+      "source": "https://blog.codafication.com/",
+      "feed_url": "https://blog.codafication.com/rss.xml",
+      "title": "",
+      "saved": 0,
+      "method": "discovered"
+    }
+  ],
+  "post_count": 0,
+  "fetched": "2026-08-01T15:49:00Z"
+}
