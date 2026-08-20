@@ -42,6 +42,21 @@ tags:
 - FNOL
 - Supply Chain
 - GraphQL
+- Webhook
+- SDK
+- Extensions
+- Multi-Tenant
+- Partner Gated
+tags_raw:
+- Insurance
+- Australia
+- Insurtech
+- Claims
+- Claims Management
+- Property and Casualty
+- FNOL
+- Supply Chain
+- GraphQL
 - Webhooks
 - SDK
 - Extensions
@@ -67,6 +82,13 @@ apis:
     production host, and none was fabricated.
   humanURL: https://docs.unitycloud.io/
   tags:
+  - GraphQL
+  - Webhook
+  - Insurance
+  - Claims
+  - Extensions
+  - Multi-Tenant
+  tags_raw:
   - GraphQL
   - Webhooks
   - Insurance
