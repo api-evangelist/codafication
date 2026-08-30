@@ -56,7 +56,7 @@ tags:
 - Webhook
 - SDK
 - Extensions
-- Multi-Tenant
+- Multi Tenant
 - Partner Gated
 tags_raw:
 - Insurance
@@ -98,7 +98,7 @@ apis:
   - Insurance
   - Claims
   - Extensions
-  - Multi-Tenant
+  - Multi Tenant
   tags_raw:
   - GraphQL
   - Webhooks
