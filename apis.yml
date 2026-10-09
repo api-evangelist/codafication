@@ -48,6 +48,9 @@ accessModel:
   trial: false
   try_now: false
   public: false
+  gated: partner
+  gated_source:
+  - tag:Partner Gated
   label: Self-serve signup
   confidence: medium
   source:
@@ -71,7 +74,6 @@ tags:
 - SDK
 - Extensions
 - Multi-Tenant
-- Partner Gated
 tags_raw:
 - Insurance
 - Australia
@@ -86,7 +88,6 @@ tags_raw:
 - SDK
 - Extensions
 - Multi Tenant
-- Partner Gated
 created: '2026-07-25'
 modified: '2026-07-25'
 specificationVersion: '0.23'
@@ -193,3 +194,5 @@ common:
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
+x-tags-removed:
+- Partner Gated
