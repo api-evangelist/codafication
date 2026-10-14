@@ -1,0 +1,27 @@
+generated: '2026-10-14'
+method: searched
+checked:
+- guidewire/integrations/guidewire-integration-edges.yml
+source:
+- guidewire/integrations/guidewire-integration-edges.yml
+edges:
+- partner_name: Guidewire (own)
+  partner: guidewire
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://marketplace.guidewire.com/product/01tKj00000Pwfw5IAB/01tKj00000Pwfw5IAB
+  mirror_of: guidewire/integrations/guidewire-integration-edges.yml
+  apps:
+  - Codafication Crunchwork Accelerator for ClaimCenter
+  listing_count: 1
+  detected: '2026-10-14'
+  detected_by: mirror-platform-listings.py
+  category: Accelerator; Claims Automation; ClaimCenter
+  badges:
+  - Ready for Guidewire
+  - 'Partner tier: Growth'
